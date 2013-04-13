@@ -17,6 +17,7 @@ The omniselect function accepts an options object.
 * `itemLabel` - Takes a callback wtih a single parameter `item`. Should return the label that is displayed in the list of results.
 * `itemValue` - Takes a callback with a single parameter `item`. Should return the value that gets set on the input field when the item is selected.
 * `renderItem` - Takes a callback with three parameters `label`, `id`, and `index`. Returns a string or element to be appended to the results list. In most cases you'll want this to be a `li` element. If you're specifying this callback, you should probably also specify `itemId` and/or `itemValue`.
+* `timeout` - Integer, milliseconds delay that occurs after input events are triggered before the function that renders and removes the autocomplete dropdown fires. Defaults to 300.
 
 You can also bind to the following events:
 
@@ -54,7 +55,7 @@ $(document).ready(function() {
       return '<li><a href="#">' + label + '</a></li>';
     }
   });
-  
+
   $input.on('omniselect:select', function(event, value) {
     console.log('Selected: ' + value);
   });
