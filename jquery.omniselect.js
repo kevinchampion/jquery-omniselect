@@ -9,7 +9,8 @@
       resultsClass: 'omniselect-results',
       activeClass: 'omniselect-active',
       numResults: 10,
-      allowAdd: false
+      allowAdd: false,
+      timeout: 300
     };
 
     var plugin = {},
@@ -25,7 +26,7 @@
       $input.on('keypress.omniselect', keypress);
       $input.on('keyup.omniselect', keyup);
       $input.on('keydown.omniselect', keydown);
-      $input.on('cut.omniselect paste.omniselect', fauxdelay);
+      $input.on('cut.omniselect paste.omniselect', rendertimeout);
 
       $results.on('click.omniselect', click);
       $results.on('mouseenter.omniselect', 'li', mouseenter);
@@ -204,7 +205,7 @@
         return;
       }
 
-      render();
+      rendertimeout();
 
       e.stopPropagation();
       e.preventDefault();
@@ -228,10 +229,24 @@
       if (!focused && visible) hide();
     };
 
-    var fauxdelay = function(e) {
-      setTimeout( function() {
-        render();
-      }, 0 );
+    var rendertimeout = function(e) {
+      clearTimeout( plugin.searching );
+      plugin.searching = delay(function() {
+        if ($input.val() != plugin.value) {
+          render();
+          plugin.value = $input.val();
+        }
+      }, options.timeout );
+    }
+
+    // Taken directly from jquery.ui.widget.js line 425.
+    var delay = function( handler, delay ) {
+      function handlerProxy() {
+        return ( typeof handler === "string" ? instance[ handler ] : handler )
+          .apply( instance, arguments );
+      }
+      var instance = this;
+      return setTimeout( handlerProxy, delay || 0 );
     }
 
     var fire = function(name, data) {
